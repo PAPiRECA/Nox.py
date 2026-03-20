@@ -6,6 +6,8 @@ import {
   ShoppingBag,
   Star,
   Search,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const fadeUp = {
@@ -19,23 +21,56 @@ const fadeUp = {
 
 const introOverlay = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.35 } },
-  exit: { opacity: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } },
+  show: { opacity: 1, transition: { duration: 0.45 } },
+  exit: { opacity: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 const introPanel = {
-  hidden: { opacity: 0, scale: 0.94, y: 16 },
+  hidden: { opacity: 0, scale: 0.92, y: 24, filter: "blur(8px)" },
   show: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
+    filter: "blur(0px)",
+    transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] as const },
   },
   exit: {
     opacity: 0,
-    scale: 1.03,
-    y: -12,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+    scale: 1.04,
+    y: -18,
+    filter: "blur(10px)",
+    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
+const introLogo = {
+  hidden: { opacity: 0, scale: 0.86, rotate: -6 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: { duration: 0.95, delay: 0.15, ease: [0.22, 1, 0.36, 1] as const },
+  },
+  exit: {
+    opacity: 0,
+    scale: 1.08,
+    rotate: 3,
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
+const introText = {
+  hidden: { opacity: 0, y: 18, letterSpacing: "0.2em" },
+  show: {
+    opacity: 1,
+    y: 0,
+    letterSpacing: "0.06em",
+    transition: { duration: 0.9, delay: 0.28, ease: [0.22, 1, 0.36, 1] as const },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -50,6 +85,11 @@ type Product = {
 
 type CartItem = Product & {
   quantity: number;
+};
+
+type ToastState = {
+  show: boolean;
+  message: string;
 };
 
 const filters = ["Todos", "Combos", "Combos premium", "Pulseras", "Collares"];
@@ -206,7 +246,7 @@ export default function NoxAccessoriesStore() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setShowIntro(false);
-    }, 2200);
+    }, 2600);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -266,6 +306,7 @@ export default function NoxAccessoriesStore() {
 
   const bracelets = products.filter((p) => p.category === "Pulseras" && matchesSearch(p));
   const necklaces = products.filter((p) => p.category === "Collares" && matchesSearch(p));
+  const combosOnly = products.filter((p) => p.category === "COMBOS" && matchesSearch(p));
 
   const filteredProducts = useMemo(() => {
     if (activeFilter === "Todos") return products.filter(matchesSearch);
@@ -319,7 +360,7 @@ export default function NoxAccessoriesStore() {
 
   const whatsappMessage =
     cart.length === 0
-      ? "Hola, quiero consultar sobre productos de NOX.PY."
+      ? "Hola, quiero consultar sobre productos de NOX | ACCESORIES."
       : [
           "Hola, quiero hacer este pedido:",
           "",
@@ -343,30 +384,46 @@ export default function NoxAccessoriesStore() {
             exit="exit"
             className="fixed inset-0 z-[140] flex items-center justify-center overflow-hidden bg-[#06070b]"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.08),transparent_14%),radial-gradient(circle_at_50%_50%,rgba(194,162,95,0.18),transparent_26%),linear-gradient(180deg,#05060a_0%,#090b10_100%)]" />
-            <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.18)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:42px_42px]" />
-            <div className="absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c2a25f]/[0.12] blur-[120px]" />
-
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.05),transparent_12%),radial-gradient(circle_at_50%_50%,rgba(194,162,95,0.22),transparent_24%),linear-gradient(180deg,#05060a_0%,#090b10_100%)]" />
+            <motion.div
+              animate={{ opacity: [0.06, 0.14, 0.06], scale: [1, 1.06, 1] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c2a25f]/[0.14] blur-[130px]"
+            />
+            <motion.div
+              animate={{ y: [0, 16, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 opacity-[0.05] [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:42px_42px]"
+            />
             <motion.div
               variants={introPanel}
               initial="hidden"
               animate="show"
               exit="exit"
-              className="relative mx-6 flex w-full max-w-md flex-col items-center rounded-[32px] border border-white/10 bg-white/[0.04] p-8 text-center shadow-[0_24px_90px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
+              className="relative mx-6 flex w-full max-w-md flex-col items-center rounded-[34px] border border-white/10 bg-white/[0.05] p-8 text-center shadow-[0_24px_90px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
             >
-              <div className="absolute inset-0 rounded-[32px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_26%)]" />
-              <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-black/20 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+              <div className="absolute inset-0 rounded-[34px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.11),transparent_26%)]" />
+              <motion.div
+                variants={introLogo}
+                className="relative overflow-hidden rounded-[26px] border border-white/10 bg-black/20 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+              >
                 <img src="/brand/profile.jpeg" alt="NOX logo" draggable={false} className="pointer-events-none h-28 w-28 object-cover sm:h-32 sm:w-32" />
-              </div>
-              <p className="relative mt-6 text-[11px] uppercase tracking-[0.28em] text-white/40">
+                <motion.div
+                  initial={{ x: "-120%", opacity: 0 }}
+                  animate={{ x: ["-120%", "120%"], opacity: [0, 0.5, 0] }}
+                  transition={{ duration: 1.2, delay: 0.6, ease: "easeInOut" }}
+                  className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/35 to-transparent blur-md"
+                />
+              </motion.div>
+              <motion.p variants={introText} className="relative mt-6 text-[11px] uppercase tracking-[0.28em] text-white/40">
                 Nox Accessories
-              </p>
-              <h2 className="relative mt-3 text-4xl font-semibold tracking-[0.06em] text-white sm:text-5xl">
-                NOX.PY
-              </h2>
-              <p className="relative mt-4 text-sm leading-7 text-white/58 sm:text-base">
+              </motion.p>
+              <motion.h2 variants={introText} className="relative mt-3 text-4xl font-semibold tracking-[0.06em] text-white sm:text-5xl">
+                NOX | ACCESORIES
+              </motion.h2>
+              <motion.p variants={introText} className="relative mt-4 text-sm leading-7 text-white/58 sm:text-base">
                 Pulseras, collares y combos premium.
-              </p>
+              </motion.p>
             </motion.div>
           </motion.div>
         ) : null}
@@ -439,17 +496,7 @@ export default function NoxAccessoriesStore() {
 
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#08090d]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.04] text-sm font-semibold text-white/80">
-              NP
-            </div>
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-white/35">Accesorios</p>
-              <a href="#top" className="text-lg font-semibold text-white">
-                NOX.PY
-              </a>
-            </div>
-          </div>
+          <div></div>
 
           <div className="hidden items-center gap-3 md:flex">
             <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-white/55">
@@ -486,97 +533,88 @@ export default function NoxAccessoriesStore() {
         <style>{`
           @keyframes nox-marquee {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-25%); }
+            100% { transform: translateX(-33.333%); }
           }
         `}</style>
 
-        <div className="-mx-5 mb-0 overflow-hidden border-y border-[#c2a25f]/20 bg-[#8f7440] lg:-mx-8">
-          <div className="flex w-max" style={{ animation: "nox-marquee 18s linear infinite" }}>
-            {Array.from({ length: 4 }).map((_, group) => (
+        <div className="-mx-5 mb-0 overflow-hidden border-y border-white/8 bg-[linear-gradient(90deg,#15171d_0%,#2a2418_18%,#6b5630_50%,#2a2418_82%,#15171d_100%)] lg:-mx-8">
+          <div className="flex w-max" style={{ animation: "nox-marquee 28s linear infinite" }}>
+            {Array.from({ length: 6 }).map((_, group) => (
               <div
                 key={group}
-                className="flex min-w-max items-center gap-6 whitespace-nowrap px-6 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white"
+                className="flex min-w-max items-center gap-5 whitespace-nowrap px-6 py-2 text-[11px] font-medium tracking-[0.18em] text-white/88"
               >
-                <span>10% de descuento en combos</span>
-                <span>•</span>
-                <span>combos nuevos disponibles</span>
-                <span>•</span>
-                <span>accesorios premium</span>
-                <span>•</span>
-                <span>pulseras y collares disponibles</span>
-                <span>•</span>
-                <span>colección nox.py</span>
-                <span>•</span>
+                <span className="uppercase">Accesorios premium</span>
+                <span className="text-[#ead6a8]/70">•</span>
+                <span className="uppercase">10% off en combos seleccionados</span>
+                <span className="text-[#ead6a8]/70">•</span>
+                <span className="uppercase">Atención directa por WhatsApp</span>
+                <span className="text-[#ead6a8]/70">•</span>
+                <span className="uppercase">Colección NOX | ACCESORIES</span>
+                <span className="text-[#ead6a8]/70">•</span>
               </div>
             ))}
           </div>
         </div>
 
-        <section className="relative -mx-5 lg:-mx-8">
-          <div className="h-[230px] overflow-hidden border-b border-white/10 bg-[#0c0d12] sm:h-[290px] lg:h-[360px]">
-            <img src="/brand/banner.jpeg" alt="NOX banner" draggable={false} className="pointer-events-none h-full w-full object-cover" />
+        <section className="relative -mx-5 overflow-hidden border-b border-white/10 lg:-mx-8">
+          <div className="absolute inset-0 bg-[#090b10]" />
+          <div className="absolute inset-0">
+            <img src="/brand/banner.jpeg" alt="NOX banner" draggable={false} className="pointer-events-none h-full w-full object-cover opacity-40" />
           </div>
-        </section>
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,7,11,0.96)_0%,rgba(6,7,11,0.88)_36%,rgba(6,7,11,0.55)_62%,rgba(6,7,11,0.85)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(194,162,95,0.20),transparent_24%)]" />
 
-        <section className="relative z-10 -mt-12 mb-8 px-2 sm:-mt-20 lg:-mt-24">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:gap-5">
-              <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-[24px] border-4 border-[#08090d] bg-[#0f1117] shadow-[0_20px_60px_rgba(0,0,0,0.45)] sm:h-32 sm:w-32">
-                <img src="/brand/profile.jpeg" alt="NOX profile" draggable={false} className="pointer-events-none h-full w-full object-cover" />
+          <div className="relative mx-auto flex min-h-[350px] max-w-7xl flex-col justify-end px-5 py-10 sm:min-h-[420px] sm:py-14 lg:px-8 lg:py-16">
+            <div className="max-w-3xl">
+              <div className="mb-5 flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:h-20 sm:w-20">
+                  <img src="/brand/profile.jpeg" alt="NOX profile" draggable={false} className="pointer-events-none h-full w-full object-cover" />
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.32em] text-[#ead6a8]/70">Nox Accessories</p>
+                  <div className="mt-2 h-px w-24 bg-gradient-to-r from-[#c2a25f] to-transparent" />
+                </div>
               </div>
-              <div className="pb-2">
-                <h1 className="text-xl font-semibold tracking-tight text-white sm:text-3xl">NOX.PY</h1>
-                <p className="mt-1.5 max-w-[260px] text-sm leading-6 text-white/55 sm:max-w-none sm:text-base">
-                  Pulseras, collares y combos con 10% de descuento.
-                </p>
-              </div>
-            </div>
 
-            <div className="flex w-full flex-col gap-3 pb-2 sm:w-auto sm:flex-row sm:flex-wrap">
-              <div className="flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-3 text-white/60 sm:w-auto">
-                <Search className="h-4 w-4 shrink-0" />
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar"
-                  className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/35 sm:w-40 sm:flex-none"
-                />
-                <select
-                  value={activeFilter}
-                  onChange={(e) => setActiveFilter(e.target.value)}
-                  className="max-sm:w-[112px] rounded-xl border border-white/10 bg-[#111319] px-2.5 py-2 text-xs text-white outline-none"
-                >
-                  {filters.map((filter) => (
-                    <option key={filter} value={filter}>
-                      {filter}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex w-full gap-3 sm:w-auto">
+              <h1 className="text-4xl font-semibold tracking-[0.06em] text-white sm:text-5xl lg:text-6xl">
+                NOX | ACCESORIES
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68 sm:text-base lg:text-lg">
+                Accesorios masculinos con estética premium. Pulseras, collares y combos pensados para elevar tu estilo con una presencia más limpia, elegante y moderna.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
                 <a
-                  href="#carrito"
-                  className="relative inline-flex flex-1 items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white/85 transition hover:bg-white/[0.07] sm:w-auto sm:flex-none sm:justify-start"
+                  href="#catalogo"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.07] px-5 py-3 text-sm font-medium text-white transition hover:bg-white/[0.12]"
                 >
-                  <ShoppingBag className="h-4 w-4" />
-                  <span>Carrito</span>
-                  <span className="rounded-full bg-white/[0.06] px-3 py-1 text-xs text-white/78">
-                    {formatGs(cartTotal)}
-                  </span>
-                  {cartCount > 0 ? (
-                    <span className="absolute -right-2 -top-2 inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-semibold text-white">
-                      {cartCount}
-                    </span>
-                  ) : null}
+                  Ver catálogo
                 </a>
                 <a
                   href="https://www.instagram.com/nox.py_/"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white/85 transition hover:bg-white/[0.07]"
-                  aria-label="Instagram"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/10 bg-black/20 px-5 py-3 text-sm font-medium text-white/82 transition hover:bg-white/[0.06] hover:text-white"
                 >
-                  <Instagram className="h-5 w-5" />
+                  Instagram
                 </a>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative z-10 mb-8 px-2 pt-6 sm:pt-8"> 
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-5 py-4 backdrop-blur-xl">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-white/38">Estilo</p>
+              <p className="mt-2 text-base font-medium text-white">Minimalista y premium</p>
+            </div>
+            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-5 py-4 backdrop-blur-xl">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-white/38">Colección</p>
+              <p className="mt-2 text-base font-medium text-white">Pulseras, collares y combos</p>
+            </div>
+            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-5 py-4 backdrop-blur-xl">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-white/38">Contacto</p>
+              <p className="mt-2 text-base font-medium text-white">Compra rápida por WhatsApp</p>
             </div>
           </div>
         </section>
@@ -803,6 +841,7 @@ export default function NoxAccessoriesStore() {
     </div>
   );
 }
+
 
 
 
