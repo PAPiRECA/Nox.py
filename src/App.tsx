@@ -6,8 +6,6 @@ import {
   ShoppingBag,
   Star,
   Search,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 
 const fadeUp = {
@@ -52,11 +50,6 @@ type Product = {
 
 type CartItem = Product & {
   quantity: number;
-};
-
-type ToastState = {
-  show: boolean;
-  message: string;
 };
 
 const filters = ["Todos", "Combos", "Combos premium", "Pulseras", "Collares"];
@@ -273,7 +266,6 @@ export default function NoxAccessoriesStore() {
 
   const bracelets = products.filter((p) => p.category === "Pulseras" && matchesSearch(p));
   const necklaces = products.filter((p) => p.category === "Collares" && matchesSearch(p));
-  const combosOnly = products.filter((p) => p.category === "COMBOS" && matchesSearch(p));
 
   const filteredProducts = useMemo(() => {
     if (activeFilter === "Todos") return products.filter(matchesSearch);
