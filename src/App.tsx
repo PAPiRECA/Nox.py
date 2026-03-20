@@ -6,6 +6,8 @@ import {
   ShoppingBag,
   Star,
   Search,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const fadeUp = {
@@ -52,6 +54,11 @@ type CartItem = Product & {
   quantity: number;
 };
 
+type ToastState = {
+  show: boolean;
+  message: string;
+};
+
 const filters = ["Todos", "Combos", "Combos premium", "Pulseras", "Collares"];
 
 const products: Product[] = [
@@ -84,10 +91,25 @@ const products: Product[] = [
 ];
 
 function ProductCard({ item, onAdd, featured = false }: { item: Product; onAdd: (item: Product) => void; featured?: boolean }) {
+  const [localAdded, setLocalAdded] = useState(false);
+
+  const handleAdd = () => {
+    onAdd(item);
+    setLocalAdded(true);
+    window.setTimeout(() => {
+      setLocalAdded(false);
+    }, 1400);
+  };
+
   return (
     <motion.div variants={fadeUp}>
       <div className={`group rounded-[20px] p-2.5 transition duration-300 hover:-translate-y-1 ${featured ? "border border-white/10 bg-white/[0.03] shadow-[0_12px_40px_rgba(0,0,0,0.24)] hover:border-white/20 hover:bg-white/[0.05]" : "bg-transparent shadow-none border border-transparent hover:bg-white/[0.02]"}`}>
         <div className={`relative overflow-hidden rounded-[18px] bg-[#0f1117] ${featured ? "" : "border border-white/6"}`}>
+          {localAdded ? (
+            <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 rounded-xl border border-[#c2a25f]/20 bg-black/70 px-3 py-2 text-center text-xs font-medium text-[#ead6a8] backdrop-blur-md">
+              Agregado al carrito
+            </div>
+          ) : null}
           <div className="aspect-[4/4.5] overflow-hidden">
             <img
               src={item.image}
@@ -117,7 +139,7 @@ function ProductCard({ item, onAdd, featured = false }: { item: Product; onAdd: 
             </div>
           </div>
           <button
-            onClick={() => onAdd(item)}
+            onClick={handleAdd}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-medium text-white/84 transition hover:bg-white/[0.08]"
           >
             <ShoppingBag className="h-4 w-4" /> Agregar al carrito
@@ -251,6 +273,7 @@ export default function NoxAccessoriesStore() {
 
   const bracelets = products.filter((p) => p.category === "Pulseras" && matchesSearch(p));
   const necklaces = products.filter((p) => p.category === "Collares" && matchesSearch(p));
+  const combosOnly = products.filter((p) => p.category === "COMBOS" && matchesSearch(p));
 
   const filteredProducts = useMemo(() => {
     if (activeFilter === "Todos") return products.filter(matchesSearch);
@@ -282,6 +305,7 @@ export default function NoxAccessoriesStore() {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
+
   };
 
   const removeFromCart = (name: string) => {
