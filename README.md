@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# NOX | Accessories
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern ecommerce-style website for a men's accessories brand, focused on a premium and elegant shopping experience.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+NOX is a fashion web project built to showcase men's accessories in a clean, modern, and high-end digital storefront.
 
-## React Compiler
+The goal of this project was to create a professional brand presence online, with a strong visual identity and a polished user experience.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- Premium and modern landing page
+- Product-focused design
+- Clean and responsive interface
+- Brand-oriented visual presentation
+- Smooth user experience
+- Built for scalability and future ecommerce integration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React
+- TypeScript
+- Vite
+- CSS / Tailwind / Custom styling
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Purpose of the Project
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This project was created as a real-world web solution for a fashion/accessories brand.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+It is designed to help present products in a more professional way and improve the online image of the business.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## What I Worked On
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+In this project, I worked on:
+
+- Frontend development
+- UI structure and layout
+- Brand presentation
+- Website styling and visual improvements
+- User experience and general site polish
+
+## Future Improvements
+
+Planned next steps for this project:
+
+- Product filtering
+- Shopping cart integration
+- WhatsApp or direct purchase flow
+- Backend integration
+- Admin panel for products
+- Full ecommerce functionality
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/PAPiRECA/Nox.py.git
+cd Nox.py
