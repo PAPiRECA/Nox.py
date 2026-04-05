@@ -4,8 +4,13 @@ import {
   Instagram,
   MessageCircle,
   ShoppingBag,
-  Star,
   Search,
+  Watch,
+  Package,
+  Crown,
+  Gem,
+  Link2,
+  LayoutGrid,
 } from "lucide-react";
 
 const fadeUp = {
@@ -85,7 +90,16 @@ type CartItem = Product & {
   quantity: number;
 };
 
-const filters = ["Todos", "Combos", "Combos premium", "Pulseras", "Collares"];
+const filters = ["Todos", "Relojes", "Combos", "Combos premium", "Pulseras", "Collares"];
+
+const filterIcons: Record<string, React.ReactNode> = {
+  Todos: <LayoutGrid className="h-3.5 w-3.5" />,
+  Combos: <Package className="h-3.5 w-3.5" />,
+  "Combos premium": <Crown className="h-3.5 w-3.5" />,
+  Pulseras: <Gem className="h-3.5 w-3.5" />,
+  Collares: <Link2 className="h-3.5 w-3.5" />,
+  Relojes: <Watch className="h-3.5 w-3.5" />,
+};
 
 const products: Product[] = [
   { name: "Pulsera Moon", category: "Pulseras", price: "Gs. 60.000", image: "/products/pulsera-moon.jpeg" },
@@ -114,6 +128,11 @@ const products: Product[] = [
   { name: "Combo Brown Set", category: "COMBOS", price: "Gs. 144.000", oldPrice: "Gs. 160.000", image: "/products/combo-brown-set.jpeg", badge: "10% OFF" },
   { name: "Combo White & Black", category: "COMBOS", price: "Gs. 144.000", oldPrice: "Gs. 160.000", image: "/products/combo-white-black.jpeg", badge: "10% OFF" },
   { name: "Combo King Set", category: "COMBOS", price: "Gs. 180.000", oldPrice: "Gs. 200.000", image: "/products/combo-king-set.jpeg", badge: "10% OFF" },
+  { name: "Orbit Watch Amarillo", category: "Relojes", price: "Gs. 245.000", image: "/products/Reloj-amarillo.jpeg", badge: "Nuevo" },
+  { name: "Orbit Watch Azul", category: "Relojes", price: "Gs. 245.000", image: "/products/Reloj-azul.jpeg", badge: "Nuevo" },
+  { name: "Orbit Watch Blanco", category: "Relojes", price: "Gs. 245.000", image: "/products/Reloj-blanco.jpeg", badge: "Nuevo" },
+  { name: "Orbit Watch Rojo", category: "Relojes", price: "Gs. 245.000", image: "/products/Reloj-rojo.jpeg", badge: "Nuevo" },
+  { name: "Orbit Watch Verde", category: "Relojes", price: "Gs. 245.000", image: "/products/Reloj-verde.jpeg", badge: "Nuevo" },
 ];
 
 function ProductCard({ item, onAdd, featured = false }: { item: Product; onAdd: (item: Product) => void; featured?: boolean }) {
@@ -230,6 +249,25 @@ function HorizontalScroller({
   );
 }
 
+function WatchVideoDemo() {
+  return (
+    <div className="relative overflow-hidden rounded-[22px] border border-white/10 bg-[#0f1117] aspect-video w-full">
+      <video
+        src="/products/Relojes demo.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="h-full w-full object-cover"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      <div className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-black/55 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/70 backdrop-blur-md">
+        Demo oficial
+      </div>
+    </div>
+  );
+}
+
 export default function NoxAccessoriesStore() {
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [searchQuery, setSearchQuery] = useState("");
@@ -254,22 +292,6 @@ export default function NoxAccessoriesStore() {
     );
   };
 
-  const featuredNames = [
-    "Combo Dark Set",
-    "Combo Storm Set",
-    "Collar Gold Point",
-    "Collar Silver Point",
-    "Combo Gold Set",
-    "Combo King Set",
-    "Pulsera Moon",
-    "Pulsera Black King",
-  ];
-
-  const featuredProducts = featuredNames
-    .map((name) => products.find((p) => p.name === name))
-    .filter(Boolean)
-    .filter((p) => matchesSearch(p as Product)) as Product[];
-
   const premiumComboNames = [
     "Combo Gold Set",
     "Combo Blue Set",
@@ -286,19 +308,9 @@ export default function NoxAccessoriesStore() {
     (p) => p.category === "COMBOS" && !premiumComboNames.includes(p.name) && matchesSearch(p)
   );
 
-  const featuredFiltered = featuredProducts.filter((p) => {
-    if (activeFilter === "Todos") return true;
-    if (activeFilter === "Combos") {
-      return p.category === "COMBOS" && !premiumComboNames.includes(p.name);
-    }
-    if (activeFilter === "Combos premium") {
-      return p.category === "COMBOS" && premiumComboNames.includes(p.name);
-    }
-    return p.category === activeFilter;
-  });
-
   const bracelets = products.filter((p) => p.category === "Pulseras" && matchesSearch(p));
   const necklaces = products.filter((p) => p.category === "Collares" && matchesSearch(p));
+  const watches = products.filter((p) => p.category === "Relojes" && matchesSearch(p));
   
   const filteredProducts = useMemo(() => {
     if (activeFilter === "Todos") return products.filter(matchesSearch);
@@ -319,6 +331,7 @@ export default function NoxAccessoriesStore() {
   const showPremiumCombos = activeFilter === "Todos" || activeFilter === "Combos premium";
   const showBracelets = activeFilter === "Todos" || activeFilter === "Pulseras";
   const showNecklaces = activeFilter === "Todos" || activeFilter === "Collares";
+  const showWatches = activeFilter === "Todos" || activeFilter === "Relojes";
 
     const addToCart = (product: Product) => {
     setCart((prev) => {
@@ -414,7 +427,7 @@ export default function NoxAccessoriesStore() {
                 NOX | ACCESORIES
               </motion.h2>
               <motion.p variants={introText} className="relative mt-4 text-sm leading-7 text-white/58 sm:text-base">
-                Pulseras, collares y combos premium.
+                Pulseras, collares, relojes y combos premium.
               </motion.p>
             </motion.div>
           </motion.div>
@@ -488,7 +501,12 @@ export default function NoxAccessoriesStore() {
 
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#08090d]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
-          <div></div>
+          <a href="#top" className="flex items-center gap-2.5">
+            <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
+              <img src="/brand/profile.jpeg" alt="NOX" draggable={false} className="pointer-events-none h-8 w-8 object-cover" />
+            </div>
+            <span className="text-sm font-semibold tracking-[0.12em] text-white/80">NOX</span>
+          </a>
 
           <div className="hidden items-center gap-3 md:flex">
             <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-white/55">
@@ -540,6 +558,8 @@ export default function NoxAccessoriesStore() {
                 <span className="text-[#ead6a8]/70">•</span>
                 <span className="uppercase">10% off en combos seleccionados</span>
                 <span className="text-[#ead6a8]/70">•</span>
+                <span className="uppercase">Orbit Watch — 5 colores disponibles</span>
+                <span className="text-[#ead6a8]/70">•</span>
                 <span className="uppercase">Atención directa por WhatsApp</span>
                 <span className="text-[#ead6a8]/70">•</span>
                 <span className="uppercase">Colección NOX | ACCESORIES</span>
@@ -573,7 +593,7 @@ export default function NoxAccessoriesStore() {
                 NOX | ACCESORIES
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-white/68 sm:text-base lg:text-lg">
-                Accesorios masculinos con estética premium. Pulseras, collares y combos pensados para elevar tu estilo con una presencia más limpia, elegante y moderna.
+                Accesorios masculinos con estética premium. Pulseras, collares, combos y relojes pensados para elevar tu estilo con una presencia más limpia, elegante y moderna.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -602,7 +622,7 @@ export default function NoxAccessoriesStore() {
             </div>
             <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-5 py-4 backdrop-blur-xl">
               <p className="text-[11px] uppercase tracking-[0.24em] text-white/38">Colección</p>
-              <p className="mt-2 text-base font-medium text-white">Pulseras, collares y combos</p>
+              <p className="mt-2 text-base font-medium text-white">Pulseras, collares, combos y relojes</p>
             </div>
             <div className="rounded-[24px] border border-white/10 bg-white/[0.03] px-5 py-4 backdrop-blur-xl">
               <p className="text-[11px] uppercase tracking-[0.24em] text-white/38">Contacto</p>
@@ -624,42 +644,83 @@ export default function NoxAccessoriesStore() {
                   key={filter}
                   type="button"
                   onClick={() => setActiveFilter(filter)}
-                  className={`shrink-0 rounded-full border px-4 py-2.5 text-sm transition ${
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2.5 text-sm transition ${
                     active
                       ? "border-white/25 bg-white/[0.08] text-white"
                       : "border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06] hover:text-white"
                   }`}
                 >
+                  {filterIcons[filter]}
                   {filter}
                 </button>
               );
             })}
           </motion.div>
 
-          <motion.div variants={fadeUp} className="mb-12 rounded-[28px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_14px_50px_rgba(0,0,0,0.28)] sm:p-6">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Star className="h-5 w-5 fill-red-500 text-red-500" />
-                <h2 className="text-xl font-semibold text-white sm:text-2xl">Destacados</h2>
-              </div>
-              <span className="text-sm text-white/40">{featuredFiltered.length} productos</span>
-            </div>
-
-            <HorizontalScroller id="featured-scroll">
-              {featuredFiltered.map((item) => (
-                <div key={`featured-${item.name}`} className="w-[220px] shrink-0 sm:w-[240px] lg:w-[250px]">
-                  <ProductCard item={item} onAdd={addToCart} featured />
-                </div>
-              ))}
-            </HorizontalScroller>
-          </motion.div>
-
           <div id="catalogo">
             {activeFilter === "Todos" ? (
               <div className="space-y-14">
+                {showWatches && watches.length > 0 ? (
+                  <motion.section variants={fadeUp} id="relojes">
+                    <div className="mb-6 flex items-center gap-3">
+                      <Watch className="h-6 w-6 text-[#ead6a8]" />
+                      <h2 className="text-2xl font-semibold text-white sm:text-3xl">Orbit Watch</h2>
+                      <span className="text-sm text-white/40">{watches.length} colores</span>
+                    </div>
+
+                    <div className="mb-6 rounded-[24px] border border-[#c2a25f]/20 bg-[linear-gradient(135deg,rgba(194,162,95,0.06),rgba(255,255,255,0.02))] p-5 sm:p-6">
+                      <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
+                        <div className="w-full lg:w-1/2">
+                          <WatchVideoDemo />
+                        </div>
+                        <div className="w-full lg:w-1/2 lg:pl-4">
+                          <p className="text-[11px] uppercase tracking-[0.28em] text-[#ead6a8]/60">Colección exclusiva</p>
+                          <h3 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Orbit Watch</h3>
+                          <p className="mt-3 text-sm leading-7 text-white/60 sm:text-base">
+                            Un solo diseño, cinco colores. Construcción premium con detalles iluminados que marcan presencia en cualquier ocasión.
+                          </p>
+                          <div className="mt-4 flex items-baseline gap-2">
+                            <span className="text-2xl font-semibold text-white">Gs. 245.000</span>
+                            <span className="text-sm text-white/40">por unidad</span>
+                          </div>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {watches.map((w) => {
+                              const color = w.name.replace("Orbit Watch ", "");
+                              const colorMap: Record<string, string> = {
+                                Amarillo: "#f5c518",
+                                Azul: "#2d8cf0",
+                                Blanco: "#e8e8e8",
+                                Rojo: "#e03535",
+                                Verde: "#22c55e",
+                              };
+                              return (
+                                <div
+                                  key={w.name}
+                                  title={color}
+                                  className="h-6 w-6 rounded-full border-2 border-white/20 shadow-md"
+                                  style={{ backgroundColor: colorMap[color] ?? "#aaa" }}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <HorizontalScroller>
+                      {watches.map((item) => (
+                        <div key={item.name} className="w-[220px] shrink-0 sm:w-[240px] lg:w-[250px]">
+                          <ProductCard item={item} onAdd={addToCart} />
+                        </div>
+                      ))}
+                    </HorizontalScroller>
+                  </motion.section>
+                ) : null}
+
                 {showCombos && standardCombos.length > 0 ? (
                   <motion.section variants={fadeUp} id="combos">
                     <div className="mb-6 flex items-center gap-3">
+                      <Package className="h-6 w-6 text-[#ead6a8]" />
                       <h2 className="text-2xl font-semibold text-white sm:text-3xl">Combos</h2>
                       <span className="text-sm text-white/40">{standardCombos.length} combos</span>
                     </div>
@@ -676,6 +737,7 @@ export default function NoxAccessoriesStore() {
                 {showPremiumCombos && premiumCombos.length > 0 ? (
                   <motion.section variants={fadeUp} id="combos-premium">
                     <div className="mb-6 flex items-center gap-3">
+                      <Crown className="h-6 w-6 text-[#ead6a8]" />
                       <h2 className="text-2xl font-semibold text-white sm:text-3xl">Combos Premium</h2>
                       <span className="text-sm text-white/40">{premiumCombos.length} combos</span>
                     </div>
@@ -692,6 +754,7 @@ export default function NoxAccessoriesStore() {
                 {showBracelets && bracelets.length > 0 ? (
                   <motion.section variants={fadeUp} id="pulseras">
                     <div className="mb-6 flex items-center gap-3">
+                      <Gem className="h-6 w-6 text-[#ead6a8]" />
                       <h2 className="text-2xl font-semibold text-white sm:text-3xl">Pulseras</h2>
                       <span className="text-sm text-white/40">{bracelets.length} productos</span>
                     </div>
@@ -708,6 +771,7 @@ export default function NoxAccessoriesStore() {
                 {showNecklaces && necklaces.length > 0 ? (
                   <motion.section variants={fadeUp} id="collares">
                     <div className="mb-6 flex items-center gap-3">
+                      <Link2 className="h-6 w-6 text-[#ead6a8]" />
                       <h2 className="text-2xl font-semibold text-white sm:text-3xl">Collares</h2>
                       <span className="text-sm text-white/40">{necklaces.length} productos</span>
                     </div>
@@ -721,7 +785,7 @@ export default function NoxAccessoriesStore() {
                   </motion.section>
                 ) : null}
 
-                {(!showCombos || standardCombos.length === 0) && (!showPremiumCombos || premiumCombos.length === 0) && (!showBracelets || bracelets.length === 0) && (!showNecklaces || necklaces.length === 0) ? (
+                {(!showCombos || standardCombos.length === 0) && (!showPremiumCombos || premiumCombos.length === 0) && (!showBracelets || bracelets.length === 0) && (!showNecklaces || necklaces.length === 0) && (!showWatches || watches.length === 0) ? (
                   <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center text-white/55">
                     No se encontraron productos para esa búsqueda.
                   </div>
@@ -737,17 +801,41 @@ export default function NoxAccessoriesStore() {
                     ? "collares"
                     : activeFilter === "COMBOS"
                     ? "combos"
+                    : activeFilter === "Relojes"
+                    ? "relojes"
                     : undefined
                 }
               >
                 {filteredProducts.length > 0 ? (
-                  <HorizontalScroller>
-                    {filteredProducts.map((item) => (
-                      <div key={item.name} className="w-[220px] shrink-0 sm:w-[240px] lg:w-[250px]">
-                        <ProductCard item={item} onAdd={addToCart} />
+                  <>
+                    {activeFilter === "Relojes" ? (
+                      <div className="mb-6 rounded-[24px] border border-[#c2a25f]/20 bg-[linear-gradient(135deg,rgba(194,162,95,0.06),rgba(255,255,255,0.02))] p-5 sm:p-6">
+                        <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
+                          <div className="w-full lg:w-1/2">
+                            <WatchVideoDemo />
+                          </div>
+                          <div className="w-full lg:w-1/2 lg:pl-4">
+                            <p className="text-[11px] uppercase tracking-[0.28em] text-[#ead6a8]/60">Colección exclusiva</p>
+                            <h3 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Orbit Watch</h3>
+                            <p className="mt-3 text-sm leading-7 text-white/60 sm:text-base">
+                              Un solo diseño, cinco colores. Construcción premium con detalles iluminados que marcan presencia en cualquier ocasión.
+                            </p>
+                            <div className="mt-4 flex items-baseline gap-2">
+                              <span className="text-2xl font-semibold text-white">Gs. 245.000</span>
+                              <span className="text-sm text-white/40">por unidad</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    ))}
-                  </HorizontalScroller>
+                    ) : null}
+                    <HorizontalScroller>
+                      {filteredProducts.map((item) => (
+                        <div key={item.name} className="w-[220px] shrink-0 sm:w-[240px] lg:w-[250px]">
+                          <ProductCard item={item} onAdd={addToCart} />
+                        </div>
+                      ))}
+                    </HorizontalScroller>
+                  </>
                 ) : (
                   <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center text-white/55">
                     No se encontraron productos para esa búsqueda.
@@ -830,6 +918,21 @@ export default function NoxAccessoriesStore() {
           </motion.div>
         </section>
       </main>
+
+      <a
+        href={whatsappCartLink}
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full border border-white/15 bg-[#128c7e] px-4 py-3 text-sm font-medium text-white shadow-[0_8px_32px_rgba(18,140,126,0.35)] transition hover:bg-[#0e7a6e] hover:shadow-[0_8px_36px_rgba(18,140,126,0.50)] sm:px-5"
+      >
+        <MessageCircle className="h-5 w-5 shrink-0" />
+        <span className="hidden sm:inline">
+          {cartCount > 0 ? `Enviar pedido (${cartCount})` : "Consultar por WhatsApp"}
+        </span>
+        {cartCount > 0 ? (
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[11px] font-bold text-[#128c7e] sm:hidden">
+            {cartCount}
+          </span>
+        ) : null}
+      </a>
     </div>
   );
 }
